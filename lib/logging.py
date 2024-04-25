@@ -2,7 +2,7 @@ import pprint, datetime
 
 
 def prettyPrint(json):
-    logMessage(pprint.pprint(json))
+    print(f"LOG:{datetime.datetime.now()}: {pprint.pprint(json)}")
 
 
 def logMessage(msg):

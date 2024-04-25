@@ -59,10 +59,11 @@ class assistedinstaller:
             "Content-Type": "application/json"
         }
         try:
-            print(url)
             response = requests.get(url, headers=headers)
 
             if response.status_code == 200:
+                logging.logMessage("Returned Infrastructure Environments")
+                logging.prettyPrint(json.loads(response.text))
                 return json.loads(response.text)
             else: 
                 logging.errorMessage(f"getInfrastructureEnvironments() method did not recieve a 200 status code, recieved {response.status_code} instead")
@@ -71,7 +72,7 @@ class assistedinstaller:
             logging.quitMessage(f"getInfrastructureEnvironments() method errored on request.get() with the following error: {e}")
 
 
-    def postInfrastructureEnvironment(self, name, pullsecret, version=None):
+    def postInfrastructureEnvironment(self, name, version=None):
         url = self.apiBase + "infra-envs"
 
         headers = {
@@ -79,7 +80,7 @@ class assistedinstaller:
             "Content-Type": "application/json"
         }
 
-        infraparams = infraEnvCreateParams.infraEnvCreateParams(name, pullsecret, version=version)
+        infraparams = infraEnvCreateParams.infraEnvCreateParams(name, self.pullSecret, version=version)
 
         data = infraparams.getParams()
 
@@ -87,6 +88,8 @@ class assistedinstaller:
             response = requests.post(url, headers=headers, json=data)
 
             if response.status_code == 201:
+                logging.logMessage(f"Successfully created Infrastructure Environment:")
+                logging.prettyPrint(json.loads(response.text))
                 return json.loads(response.text)
             else:
                 logging.errorMessage(f"postInfrastructureEnvironments() method did not recieve a 201 status code, recieved {response.status_code} instead")
@@ -94,3 +97,24 @@ class assistedinstaller:
 
         except Exception as e:
             logging.quitMessage(f"postInfrastructureEnvironments() method errored on request.post() with the following error: {e}")
+
+    def deleteInfrastructureEnvironment(self, id):
+        url = self.apiBase + f"infra-envs/{id}"
+
+        headers = {
+            "Authorization": "Bearer {}".format(self.getAccessToken()),
+            "Content-Type": "application/json"
+        }
+
+        try:
+            response = requests.delete(url, headers=headers)
+
+            if response.status_code == 204:
+                logging.logMessage(f"Successfully deleted Infrastructure Environment: {id}")
+                return True
+            else:
+                logging.errorMessage(f"deleteInfrastructureEnvironments() method did not recieve a 204 status code, recieved {response.status_code} instead")
+                return False 
+
+        except Exception as e:
+            logging.quitMessage(f"deleteInfrastructureEnvironments() method errored on request.delete() with the following error: {e}")

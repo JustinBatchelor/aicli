@@ -27,14 +27,17 @@ installer = assistedinstaller.assistedinstaller(token, pullSecret)
 
 @app.command()
 def getinfraenv(cluster_id: str = None, owner: str = None):
-    infraenvs = installer.getInfrastructureEnvironments(cluster_id=cluster_id, owner=owner)
-    logging.prettyPrint(infraenvs)
+    return installer.getInfrastructureEnvironments(cluster_id=cluster_id, owner=owner)
+    
+
+@app.command()
+def createinfraenv(name: str = None, version: str = None):
+    return installer.postInfrastructureEnvironment(name, version=version)
 
 
 @app.command()
-def postinfraenv(name: str = "", pullsecret: str = pullSecret, version: str = "None"):
-    logging.logMessage(installer.postInfrastructureEnvironment(name, pullSecret, version="4.15"))
-
+def deleteinfraenv(id: str = None):
+    return installer.deleteInfrastructureEnvironment(id=id)
 
 if __name__ == '__main__':
     app()
