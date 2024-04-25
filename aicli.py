@@ -5,11 +5,6 @@ sys.dont_write_bytecode = True
 
 
 from lib import hashicorp, assistedinstaller, logging
-from urllib3.exceptions import InsecureRequestWarning
-
-
-# requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
-
 
 
 app = typer.Typer()

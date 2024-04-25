@@ -10,7 +10,13 @@ class assistedinstaller:
         self.pullSecret = pull_secret
         self.apiBase = "https://api.openshift.com/api/assisted-install/v2/"
 
-    def getAccessToken(self):
+    def __getHeaders(self):
+        return  {
+            "Authorization": "Bearer {}".format(self.__getAccessToken()),
+            "Content-Type": "application/json"
+        }
+
+    def __getAccessToken(self):
         # URL for the token request
         url = "https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token"
 
@@ -42,7 +48,7 @@ class assistedinstaller:
         except Exception as e:
             logging.logMessage("")
 
-    
+
     # Method that will implement the /v2/infra-envs GET assisted installer endpoint
     def getInfrastructureEnvironments(self, cluster_id=None, owner=None):
         url = self.apiBase + "infra-envs"
@@ -54,10 +60,8 @@ class assistedinstaller:
             if owner is not None:
                 url += f'?owner={owner}'
 
-        headers = {
-            "Authorization": "Bearer {}".format(self.getAccessToken()),
-            "Content-Type": "application/json"
-        }
+        headers = self.__getHeaders()
+        
         try:
             response = requests.get(url, headers=headers)
 
@@ -75,10 +79,7 @@ class assistedinstaller:
     def postInfrastructureEnvironment(self, name, version=None):
         url = self.apiBase + "infra-envs"
 
-        headers = {
-            "Authorization": "Bearer {}".format(self.getAccessToken()),
-            "Content-Type": "application/json"
-        }
+        headers = self.__getHeaders()
 
         infraparams = infraEnvCreateParams.infraEnvCreateParams(name, self.pullSecret, version=version)
 
@@ -101,10 +102,7 @@ class assistedinstaller:
     def deleteInfrastructureEnvironment(self, id):
         url = self.apiBase + f"infra-envs/{id}"
 
-        headers = {
-            "Authorization": "Bearer {}".format(self.getAccessToken()),
-            "Content-Type": "application/json"
-        }
+        headers = self.__getHeaders()
 
         try:
             response = requests.delete(url, headers=headers)
