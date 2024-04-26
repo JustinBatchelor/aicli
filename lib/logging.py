@@ -9,9 +9,8 @@ def logMessage(msg):
     print(f"LOG:{datetime.datetime.now()}: {msg}")
 
 def errorMessage(msg):
-    print("ERR: {}".format(msg))
-
+    print(f"Error:{datetime.datetime.now()}: {msg}")
 
 def quitMessage(msg):
-    print("ERR: {}".format(msg))
+    logMessage(f"Error{datetime.datetime.now()}:{msg}")
     quit()
