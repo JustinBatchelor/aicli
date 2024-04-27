@@ -19,9 +19,6 @@ os.environ['REDHAT_PULL_SECRET'] = hcp.getAppSecret("assisted-installer", "pull_
 # create assisted installer instance
 installer = redhat_assisted_installer.assistedinstaller()
 
-# create proxmox cluster instance
-pve = proxmox.proxmoxcluster(hcp.getAppSecret("proxmox", "password"))
-
 
 @app.command()
 def createcluster(name: str, version: str, high_availability_mode: str = "None", cpu_architecture: str = "x86_64"):
@@ -100,6 +97,9 @@ def deploycluster(name: str, version: str, basedomain: str, size: str = "sno", c
 def destroycluster(name: str):
     if not tools.validateName(name):
         logging.quitMessage("name: {} - is not a valid name that can be used with the assisted-installer. Please ensure the name conforms to the following regular expression: {}".format(name, "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"))
+    
+    # create proxmox cluster instance
+    pve = proxmox.proxmoxcluster(hcp.getAppSecret("proxmox", "password"))
 
     deleteVMs = pve.getVMsWithTag(name)
     logging.logMessage(f"Found {len(deleteVMs)} VM's to delete from proxmox")
